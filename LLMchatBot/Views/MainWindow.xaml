@@ -1,0 +1,269 @@
+<Window x:Class="GeminiChatBot.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+        xmlns:vm="clr-namespace:GeminiChatBot.ViewModels"
+        xmlns:local="clr-namespace:GeminiChatBot.Views"
+        xmlns:md="clr-namespace:Markdig.Wpf;assembly=Markdig.Wpf"
+        mc:Ignorable="d"
+        Title="GeminiChatBot" Height="700" Width="1200"
+        Background="#1E1E1E"
+        Foreground="#E0E0E0"
+        WindowStartupLocation="CenterScreen">
+    
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Sidebar: Sohbet Gecmisi -->
+        <Border Grid.Column="0" 
+                Background="#252525" 
+                BorderBrush="#333333" 
+                BorderThickness="0,0,1,0">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <!-- Sidebar Baslik -->
+                <Border Grid.Row="0" 
+                        Background="#2D2D2D" 
+                        Padding="16,12">
+                    <TextBlock Text="Sohbet Gecmisi" 
+                               FontSize="16" 
+                               FontWeight="SemiBold"
+                               Foreground="#E0E0E0" />
+                </Border>
+
+                <!-- Oturum Listesi -->
+                <ListBox Grid.Row="1"
+                         ItemsSource="{Binding Sessions}"
+                         SelectedItem="{Binding SelectedSession}"
+                         Background="Transparent"
+                         BorderThickness="0"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="Transparent" 
+                                    Padding="12,10"
+                                    Margin="8,4"
+                                    CornerRadius="8"
+                                    Cursor="Hand">
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Background" Value="Transparent" />
+                                        <Style.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="True">
+                                                <Setter Property="Background" Value="#333333" />
+                                            </Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <StackPanel>
+                                    <TextBlock Text="{Binding SessionTitle}" 
+                                               FontSize="14"
+                                               Foreground="#E0E0E0"
+                                               TextWrapping="Wrap" />
+                                    <TextBlock Text="{Binding Date, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}" 
+                                               FontSize="11"
+                                               Foreground="#999999"
+                                               Margin="0,4,0,0" />
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+        </Border>
+
+        <!-- GridSplitter -->
+        <GridSplitter Grid.Column="1" 
+                      Width="4" 
+                      HorizontalAlignment="Stretch"
+                      Background="#333333" />
+
+        <!-- Ana Sohbet Alani -->
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <Border Grid.Row="0" 
+                    Background="#252525" 
+                    BorderBrush="#333333" 
+                    BorderThickness="0,0,0,1"
+                    Padding="20,16">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0"
+                               Text="GeminiChatBot"
+                               FontSize="18"
+                               FontWeight="SemiBold"
+                               Foreground="#E0E0E0"
+                               VerticalAlignment="Center" />
+                    <Button Grid.Column="1"
+                            Command="{Binding NewChatCommand}"
+                            Style="{StaticResource MaterialDesignIconButton}"
+                            ToolTip="Yeni Sohbet"
+                            Padding="8">
+                        <materialDesign:PackIcon Kind="Add" 
+                                                 Width="20" 
+                                                 Height="20"
+                                                 Foreground="#E0E0E0" />
+                    </Button>
+                </Grid>
+            </Border>
+
+            <!-- Mesaj Listesi -->
+            <ScrollViewer Grid.Row="1" 
+                          VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled"
+                          Background="#1E1E1E"
+                          Padding="20,16"
+                          local:ScrollViewerBehavior.AutoScroll="True">
+                <ItemsControl ItemsSource="{Binding Messages}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Grid Margin="0,8">
+                                <!-- Mesaj Balonu -->
+                                <Border Background="{Binding Converter={StaticResource BooleanToBrushConverter}}"
+                                        CornerRadius="12"
+                                        Padding="16,12"
+                                        MaxWidth="600"
+                                        HorizontalAlignment="{Binding Converter={StaticResource BooleanToHorizontalAlignmentConverter}}">
+                                    <StackPanel>
+                                        <!-- MarkdownViewer ile mesaj icerigi -->
+                                        <md:MarkdownViewer Markdown="{Binding Content}"
+                                                          Style="{Binding Converter={StaticResource BooleanToMarkdownViewerStyleConverter}}" />
+                                        <TextBlock Text="{Binding Timestamp, StringFormat='{}{0:HH:mm}'}" 
+                                                   FontSize="10"
+                                                   Foreground="{Binding Converter={StaticResource BooleanToTimestampBrushConverter}}"
+                                                   Margin="0,6,0,0"
+                                                   HorizontalAlignment="Right" />
+                                    </StackPanel>
+                                </Border>
+                            </Grid>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+
+            <!-- Bot Yaziyor Gostergesi -->
+            <Border Grid.Row="2"
+                    Background="#252525"
+                    BorderBrush="#333333"
+                    BorderThickness="0,1,0,0"
+                    Padding="20,8"
+                    Visibility="{Binding IsSending, Converter={StaticResource BooleanToVisibilityConverter}}">
+                <StackPanel Orientation="Horizontal">
+                    <materialDesign:PackIcon Kind="Loading" 
+                                             Width="16" 
+                                             Height="16"
+                                             Foreground="#6C5CE7"
+                                             Margin="0,0,8,0"
+                                             VerticalAlignment="Center">
+                        <materialDesign:PackIcon.RenderTransform>
+                            <RotateTransform Angle="0" x:Name="LoadingRotateTransform" />
+                        </materialDesign:PackIcon.RenderTransform>
+                        <materialDesign:PackIcon.Triggers>
+                            <EventTrigger RoutedEvent="Loaded">
+                                <BeginStoryboard>
+                                    <Storyboard RepeatBehavior="Forever">
+                                        <DoubleAnimation Storyboard.TargetName="LoadingRotateTransform"
+                                                         Storyboard.TargetProperty="Angle"
+                                                         From="0" To="360"
+                                                         Duration="0:0:1" />
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </materialDesign:PackIcon.Triggers>
+                    </materialDesign:PackIcon>
+                    <TextBlock Text="Gemini yaziyor..." 
+                               FontSize="12"
+                               Foreground="#999999"
+                               VerticalAlignment="Center" />
+                </StackPanel>
+            </Border>
+
+            <!-- Input Alani -->
+            <Border Grid.Row="3" 
+                    Background="#252525" 
+                    BorderBrush="#333333" 
+                    BorderThickness="0,1,0,0"
+                    Padding="20,16">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Grid Grid.Row="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- TextBox -->
+                        <TextBox x:Name="MessageTextBox"
+                                 Grid.Column="0"
+                                 Text="{Binding CurrentInput, UpdateSourceTrigger=PropertyChanged}"
+                                 materialDesign:HintAssist.Hint="Mesaj yaz..."
+                                 materialDesign:HintAssist.Foreground="#999999"
+                                 Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                                 Background="#2D2D2D"
+                                 Foreground="#E0E0E0"
+                                 BorderBrush="#444444"
+                                 FontSize="14"
+                                 Padding="12,10"
+                                 VerticalContentAlignment="Center"
+                                 Margin="0,0,12,0"
+                                 AcceptsReturn="True"
+                                 TextWrapping="Wrap"
+                                 VerticalScrollBarVisibility="Auto"
+                                 MinHeight="40"
+                                 MaxHeight="120">
+                            <TextBox.InputBindings>
+                                <KeyBinding Key="Enter" 
+                                            Command="{Binding SendMessageCommand}" />
+                            </TextBox.InputBindings>
+                        </TextBox>
+
+                        <!-- Send Button -->
+                        <Button Grid.Column="1"
+                                Command="{Binding SendMessageCommand}"
+                                Style="{StaticResource MaterialDesignRaisedButton}"
+                                Background="#6C5CE7"
+                                Foreground="White"
+                                Padding="20,10"
+                                MinWidth="100">
+                            <StackPanel Orientation="Horizontal">
+                                <materialDesign:PackIcon Kind="Send" 
+                                                         Width="18" 
+                                                         Height="18"
+                                                         Margin="0,0,8,0"
+                                                         VerticalAlignment="Center" />
+                                <TextBlock Text="Gonder" 
+                                           FontSize="14"
+                                           VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>
+

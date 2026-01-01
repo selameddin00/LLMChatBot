@@ -1,0 +1,45 @@
+<Application x:Class="GeminiChatBot.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:local="clr-namespace:GeminiChatBot.Views"
+        xmlns:md="clr-namespace:Markdig.Wpf;assembly=Markdig.Wpf"
+        Startup="App_OnStartup">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <!-- Material Design Resources -->
+                <materialDesign:BundledTheme BaseTheme="Dark" PrimaryColor="DeepPurple" SecondaryColor="Lime" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Global Converters -->
+            <local:BooleanToBrushConverter x:Key="BooleanToBrushConverter" />
+            <local:BooleanToHorizontalAlignmentConverter x:Key="BooleanToHorizontalAlignmentConverter" />
+            <local:BooleanToTextBrushConverter x:Key="BooleanToTextBrushConverter" />
+            <local:BooleanToTimestampBrushConverter x:Key="BooleanToTimestampBrushConverter" />
+            <local:BooleanToMarkdownViewerStyleConverter x:Key="BooleanToMarkdownViewerStyleConverter" />
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+
+            <!-- MarkdownViewer Styles -->
+            <Style x:Key="MarkdownViewerUserStyle" TargetType="md:MarkdownViewer">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="Margin" Value="0" />
+            </Style>
+            
+            <Style x:Key="MarkdownViewerBotStyle" TargetType="md:MarkdownViewer">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="Margin" Value="0" />
+            </Style>
+
+            <!-- Global Styles -->
+            <Style TargetType="Window">
+                <Setter Property="Background" Value="#1E1E1E" />
+                <Setter Property="Foreground" Value="#E0E0E0" />
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>
+
