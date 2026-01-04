@@ -1,3 +1,10 @@
+| Bilgi | Detay |
+| :--- | :--- |
+| **Ad Soyad** | Selameddin Tirit |
+| **Öğrenci No** | 240541035 |
+| **Bölüm** | Yazılım Mühendisliği (A) |
+| **Fakülte** | Teknoloji Fakültesi |
+
 # 🤖 GeminiChatBot
 
 <div align="center">
